@@ -54,13 +54,17 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Input")
 	class UInputAction* FocusAction;
 
-	// Focus on enemy Input Action
+	// Crouch Input Action
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Input")
 	class UInputAction* CrouchAction;
 
-	// Focus on enemy Input Action
+	// Pick up items Input Action
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Input")
 	class UInputAction* PickAction;
+
+	// Light Attack Input Action
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Input")
+	class UInputAction* LightAttackAction;
 
 	// Is character focusing
 	bool IsFocusing = false;
@@ -116,6 +120,28 @@ private:
 	********************/
 	// Character Equip State
 	ECharacterEquipState CharacterEquipState = ECharacterEquipState::Unarmed;
+
+	// Character Action State
+	ECharacterActionState CharacterActionState = ECharacterActionState::Unoccupied;
+
+	/********************
+	* Character Montage Properties
+	********************/
+	// Light Attack Montage
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	UAnimMontage* LightAttackMontage;
+
+	// Light Attack Montage Sections' names
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	TArray<FName> LightAttackMontageSections;
+
+	// Light Attack Montage Current Section's Index
+	int32 LightAttackMontageIndex = 0;
+
+	// Timer to refresh index to 0 in certain sections
+	struct FTimerHandle LightAttackTimer;
+
+
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
@@ -174,6 +200,9 @@ private:
 	// Called for Movement input
 	void Move(const FInputActionValue& Value);
 
+	// Called for Jump input
+	virtual void Jump() override;
+
 	// Called for Walking input
 	void Walk(const FInputActionValue& Value);
 
@@ -187,10 +216,16 @@ private:
 	void FocusOnEnemy();
 
 	// Crouch
-	void Crouch();
+	virtual void Crouch(bool bClientSimulation) override;
 
 	// Pick up item
 	void PickUp();
+
+	// Light Attack
+	void LightAttack();
+
+	// Axe Light Attack
+	void AxeLightAttack();
 
 	/********************
 	* UI Input Functions
@@ -210,10 +245,22 @@ private:
 	// Unhighlight Item if you are not concentrate on any items
 	void UnhighlightItem();
 
+	/********************
+	* Montage Functions
+	********************/
+	// If is occupied
+	bool CheckIfOccupied();
+
+	// Reset light attack index to 0
+	void ResetLightAttackIndex();
 public:
 	// Set Character Equip State
 	FORCEINLINE void SetCharacterEquipState(ECharacterEquipState State) { CharacterEquipState = State; }
+
+	// Get Character Equip State
 	FORCEINLINE ECharacterEquipState GetCharacterEquipState() const { return CharacterEquipState; }
 
+	// Set Character Action State
+	FORCEINLINE void SetCharacterActionState(ECharacterActionState State) { CharacterActionState = State; }
 
 };

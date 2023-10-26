@@ -20,6 +20,7 @@
 #include "UI/Inventory/InventoryWidget.h"
 #include "Data/InventoryRowBase.h"
 #include "GameFramework/PlayerController.h"
+#include "Engine/EngineTypes.h"
 
 
 
@@ -72,7 +73,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 
 	// Jumping
-	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 	// Walking
@@ -83,13 +84,17 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerCharacter::TraceToFocusOnEnemy);
 
 	// Crouch
-	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Crouch);
+	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Crouch, false);
 
 	// Pick up items
 	EnhancedInputComponent->BindAction(PickAction, ETriggerEvent::Triggered, this, &APlayerCharacter::PickUp);
 
+	// Light Attack
+	EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::LightAttack);
+
 	// Open up Inventory Widget
 	EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Triggered, this, &APlayerCharacter::OpenOrCloseInventory);
+
 }
 
 void APlayerCharacter::InitializeCharacterProperties()
@@ -150,6 +155,8 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+	// Check if character is occupied
+	if (CheckIfOccupied()) return;
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller == nullptr) return;
@@ -168,8 +175,15 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	AddMovementInput(RightDirection, MovementVector.Y);
 }
 
+void APlayerCharacter::Jump()
+{
+	if (CheckIfOccupied()) return;
+	Super::Jump();
+}
+
 void APlayerCharacter::Walk(const FInputActionValue& Value)
 {
+	if (CheckIfOccupied()) return;
 	if (LocomotionAnimInstance == nullptr) return;
 	if (LocomotionAnimInstance->GetIsCrouching() == false)
 	{
@@ -180,6 +194,7 @@ void APlayerCharacter::Walk(const FInputActionValue& Value)
 void APlayerCharacter::WalkEnd()
 {
 	if (LocomotionAnimInstance == nullptr) return;
+	CheckIfOccupied();
 	if (LocomotionAnimInstance->GetIsCrouching() == false)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 700.f;
@@ -231,8 +246,9 @@ void APlayerCharacter::FocusOnEnemy()
 	SetActorRotation(LookAtRotation);
 }
 
-void APlayerCharacter::Crouch()
+void APlayerCharacter::Crouch(bool bClientSimulation = false)
 {
+	if (CheckIfOccupied()) return;
 	if (LocomotionAnimInstance == nullptr) return;
 	switch (LocomotionAnimInstance->GetIsCrouching())
 	{
@@ -265,6 +281,32 @@ void APlayerCharacter::PickUp()
 		OpenInventory();
 	}
 	InteractableItem->K2_DestroyActor();
+}
+
+void APlayerCharacter::LightAttack()
+{
+	if (CheckIfOccupied()) return;
+	switch(CharacterEquipState)
+	{
+	case ECharacterEquipState::Unarmed:
+		return;
+	case ECharacterEquipState::AxeEquipped:
+		AxeLightAttack();
+		break;
+	}
+}
+
+void APlayerCharacter::AxeLightAttack()
+{
+	if (LocomotionAnimInstance == nullptr) return;
+	if (LightAttackMontage == nullptr) return;
+	if (LightAttackMontageSections.Num() <= 0) return;
+	// Reset timer in 2 seconds if player not attack again
+	GetWorld()->GetTimerManager().SetTimer(LightAttackTimer, this, &APlayerCharacter::ResetLightAttackIndex, 1, false, 2);
+	LocomotionAnimInstance->Montage_Play(LightAttackMontage);
+	int32 CurrentIndex = LightAttackMontageIndex % LightAttackMontageSections.Num();
+	LocomotionAnimInstance->Montage_JumpToSection(LightAttackMontageSections[CurrentIndex]);
+	LightAttackMontageIndex++;
 }
 
 void APlayerCharacter::OpenOrCloseInventory()
@@ -344,6 +386,21 @@ void APlayerCharacter::UnhighlightItem()
 	{
 		InteractableItem->GetHighlightMesh()->SetVisibility(false);
 	}
+}
+
+bool APlayerCharacter::CheckIfOccupied()
+{
+	if (CharacterActionState != ECharacterActionState::Occupied)
+	{
+		LocomotionAnimInstance->StopAllMontages(0.1);
+		return false;
+	}
+	else return true;
+}
+
+void APlayerCharacter::ResetLightAttackIndex()
+{
+	LightAttackMontageIndex = 0;
 }
 
 void APlayerCharacter::RefreshInventory()
