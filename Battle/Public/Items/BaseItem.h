@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/ItemInterface.h"
+#include "Enums/ItemEnums.h"
 
 #include "BaseItem.generated.h"
 
@@ -27,8 +28,14 @@ private:
 	class UStaticMeshComponent* HighlightMesh;
 
 	// ID of item, should be the same as Data Table Raw Name
-	UPROPERTY(EditDefaultsOnly, category = "TOSET General")
+	UPROPERTY(EditDefaultsOnly, category = "TOSET Data")
 	FName ID;
+
+	/********************
+	* Equip state
+	********************/
+	// Whether Item Been Equipped
+	EItemEquipState ItemEquipState = EItemEquipState::Unequipped;
 
 public:
 	// Sets default values for this actor's properties
@@ -49,4 +56,6 @@ public:
 	class UStaticMeshComponent* GetHighlightMesh() const;
 	FORCEINLINE FName GetID() const { return ID; }
 	FORCEINLINE UStaticMeshComponent* GetStaticMeshComponent() const { return ItemMesh;	}
+	FORCEINLINE EItemEquipState GetItemEquipState() const { return ItemEquipState; }
+	FORCEINLINE void SetItemEquipState(EItemEquipState State) { ItemEquipState = State; }
 };

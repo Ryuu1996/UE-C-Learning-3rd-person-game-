@@ -12,6 +12,27 @@ class BATTLE_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 private:
+	/********************
+	* Data Properties
+	********************/
+	// Data table for search
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Data")
+	class UDataTable* AttributeDataTable;
+
+	// Max HP
+	int32 HP = 100;
+
+	// Stamina
+	int32 Stamina = 100;
+
+	/********************
+	* Character Current Properties
+	********************/
+	// Current HP
+	int32 CurrentHP = 100;
+
+	// Current Stamina
+	int32 CurrentStamina = 100;
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
@@ -33,8 +54,17 @@ protected:
 	virtual void InitializeCharacterProperties();
 
 	// Initialize Character states
-	virtual void InitializeChracterStates();
+	virtual void InitializeCharacterStates();
+
+	// Initialize Character Attributes
+	void InitializeAttributes(FName ID);
 
 private:
-
+public:
+	FORCEINLINE int32 GetHP() const { return HP; }
+	FORCEINLINE int32 GetStamina() const { return Stamina; }
+	FORCEINLINE int32 GetCurrentHP() const { return CurrentHP; }
+	FORCEINLINE int32 GetCurrentStamina() const { return CurrentStamina; }
+	FORCEINLINE void SetCurrentHP(int32 InputHP) { CurrentHP = InputHP; }
+	FORCEINLINE void SetCurrentStamina(int32 InputStamina) { CurrentStamina = InputStamina; }
 };

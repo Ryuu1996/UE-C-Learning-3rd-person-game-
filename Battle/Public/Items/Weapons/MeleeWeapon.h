@@ -19,8 +19,8 @@ private:
 public:
 	// Use Item
 	virtual void UseItem_Implementation() override;
+	// Equip Weapon
+	virtual void EquipWeapon(class ABaseCharacter* Character) override;
 protected:
 private:
-	// Equip Weapon
-	void EquipWeapon();
 };

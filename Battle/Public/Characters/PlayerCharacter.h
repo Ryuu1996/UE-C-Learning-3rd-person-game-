@@ -111,9 +111,14 @@ private:
 	/********************
 	* Data Properties
 	********************/
+	// Player ID
+	UPROPERTY(EditDefaultsOnly, category = "TOSET Data")
+	FName ID;
+
 	// Data table for search
-	UPROPERTY(EditDefaultsOnly, Category = "TOSET General")
-	class UDataTable* DataTable;
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Data")
+	class UDataTable* InventoryDataTable;
+
 
 	/********************
 	* Character State Properties

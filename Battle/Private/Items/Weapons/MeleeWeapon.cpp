@@ -13,13 +13,14 @@ void AMeleeWeapon::UseItem_Implementation()
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (PlayerCharacter == nullptr) return;
 	PlayerCharacter->SetCharacterEquipState(ECharacterEquipState::AxeEquipped);
-	EquipWeapon();
+	EquipWeapon(PlayerCharacter);
 }
 
-void AMeleeWeapon::EquipWeapon()
+void AMeleeWeapon::EquipWeapon(ABaseCharacter* Character)
 {
-	SetOwner(PlayerCharacter);
-	SetInstigator(PlayerCharacter);
+	Super::EquipWeapon(Character);
+	SetOwner(Character);
+	SetInstigator(Character);
 	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-	GetStaticMeshComponent()->AttachToComponent(PlayerCharacter->GetMesh(), AttachmentTransformRules, FName("RightHandSocket"));
+	GetStaticMeshComponent()->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, FName("RightHandSocket"));
 }

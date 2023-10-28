@@ -43,7 +43,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if(FocusCharacter) FocusOnEnemy();
 	
 	// Highlight the item to interact
-	if (InteractableItem) HighlightItem();
+	if (InteractableItem &&
+		InteractableItem->GetItemEquipState() == EItemEquipState::Unequipped) 
+		HighlightItem();
 
 }
 
@@ -56,6 +58,7 @@ void APlayerCharacter::BeginPlay()
 	PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
 
+	InitializeAttributes(ID);
 	InitializeMappingContext();
 	InitializeWidgets();
 }
@@ -141,7 +144,7 @@ void APlayerCharacter::InitializeWidgets()
 	HUDWidget->SetProgressBarHPPercent(1.f);
 	HUDWidget->SetProgressBarSTAPercent(1.f);
 	// TODO: Set Current HP & Max HP
-	HUDWidget->SetTextBlockHP(100, 100);
+	HUDWidget->SetTextBlockHP(GetCurrentHP(), GetHP());
 }
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
@@ -266,14 +269,15 @@ void APlayerCharacter::Crouch(bool bClientSimulation = false)
 void APlayerCharacter::PickUp()
 {
 	if (InteractableItem == nullptr) return;
-	FName ID = InteractableItem->GetID();
-	if (InventoryItems.Contains(ID))
+	if (InteractableItem->GetItemEquipState() == EItemEquipState::Equipped) return;
+	FName ItemID = InteractableItem->GetID();
+	if (InventoryItems.Contains(ItemID))
 	{
-		InventoryItems[ID]++;
+		InventoryItems[ItemID]++;
 	}
 	else
 	{
-		InventoryItems.Add(ID, 1);
+		InventoryItems.Add(ItemID, 1);
 	}
 	if (IsInventoryOpening)
 	{
@@ -303,7 +307,7 @@ void APlayerCharacter::AxeLightAttack()
 	if (LightAttackMontageSections.Num() <= 0) return;
 	// Reset timer in 2 seconds if player not attack again
 	GetWorld()->GetTimerManager().SetTimer(LightAttackTimer, this, &APlayerCharacter::ResetLightAttackIndex, 1, false, 2);
-	LocomotionAnimInstance->Montage_Play(LightAttackMontage);
+	LocomotionAnimInstance->Montage_Play(LightAttackMontage, 1.4f);
 	int32 CurrentIndex = LightAttackMontageIndex % LightAttackMontageSections.Num();
 	LocomotionAnimInstance->Montage_JumpToSection(LightAttackMontageSections[CurrentIndex]);
 	LightAttackMontageIndex++;
@@ -408,7 +412,7 @@ void APlayerCharacter::RefreshInventory()
 	PlayerHUD->RefreshInventory();
 	for (auto& Item : InventoryItems)
 	{
-		FInventoryRowBase* InventoryRow = DataTable->FindRow<FInventoryRowBase>(Item.Key, FString(""));
+		FInventoryRowBase* InventoryRow = InventoryDataTable->FindRow<FInventoryRowBase>(Item.Key, FString(""));
 		PlayerHUD->AddButtonToInventory(InventoryRow, Item.Value);
 	}
 }

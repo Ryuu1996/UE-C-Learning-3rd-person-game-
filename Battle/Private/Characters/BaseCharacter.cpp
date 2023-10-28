@@ -4,6 +4,7 @@
 #include "Characters/BaseCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Data/AttributeRowBase.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -15,14 +16,15 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 }
 
 void ABaseCharacter::InitializeCharacterProperties()
 {
-
+	// Set size for collision capsule
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	GetMesh()->AddLocalRotation(FRotator(0.f, -90.f, 0.f));
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 800.f, 0.f); // ...at this rotation rate
@@ -33,9 +35,18 @@ void ABaseCharacter::InitializeCharacterProperties()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 }
 
-void ABaseCharacter::InitializeChracterStates()
+void ABaseCharacter::InitializeCharacterStates()
 {
 
+}
+
+void ABaseCharacter::InitializeAttributes(FName ItemID)
+{
+	FAttributeRowBase* AttributeRowBase = AttributeDataTable->FindRow<FAttributeRowBase>(ItemID, FString(""));
+	HP = AttributeRowBase->HP;
+	Stamina = AttributeRowBase->Stamina;
+	CurrentHP = HP;
+	CurrentStamina = Stamina;
 }
 
 // Called when the game starts or when spawned
