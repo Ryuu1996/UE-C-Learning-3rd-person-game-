@@ -7,6 +7,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Macros/GeneralMacros.h"
 
 
 ABaseWeapon::ABaseWeapon()
@@ -15,14 +17,20 @@ ABaseWeapon::ABaseWeapon()
 	SphereTraceStart->SetupAttachment(GetRootComponent());
 	SphereTraceEnd = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Trace End"));
 	SphereTraceEnd->SetupAttachment(GetRootComponent());
-	SphereTraceStart->SetCollisionProfileName("Item");
-	SphereTraceEnd->SetCollisionProfileName("Item");
+	SphereTraceStart->SetCollisionProfileName(ITEM_PROFILENAME);
+	SphereTraceEnd->SetCollisionProfileName(ITEM_PROFILENAME);
 }
 
 void ABaseWeapon::EquipWeapon(ABaseCharacter* Character)
 {
 	SetItemEquipState(EItemEquipState::Equipped);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	InitializeData(GetID());
+	GetCapsuleComponent()->SetCollisionProfileName(WITHOUTCOLLISION_PROFILENAME);
+	SetOwner(Character);
+	SetInstigator(Character);
+	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+	GetCapsuleComponent()->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, EquipSocket);
+	Character->SetCurrentWeapon(this);
 }
 
 void ABaseWeapon::BeginPlay()
@@ -65,7 +73,20 @@ void ABaseWeapon::AttackOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		true
 	);
 
-	// TODO: GetHit interface
+	// Apply Damage
+	AActor* HitActor = HitResult.GetActor();
+	if (HitActor == nullptr) return;
+	UGameplayStatics::ApplyDamage(
+		HitActor,
+		Damage,
+		GetInstigator()->GetController(),
+		this,
+		UDamageType::StaticClass()
+	);
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(HitActor);
+	if (CombatInterface == nullptr) return;
+	CombatInterface->Execute_GetHit(HitActor, HitResult.ImpactPoint);
+
 
 
 }

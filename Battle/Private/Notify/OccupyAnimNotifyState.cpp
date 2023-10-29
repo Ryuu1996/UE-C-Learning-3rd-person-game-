@@ -2,7 +2,7 @@
 
 
 #include "Notify/OccupyAnimNotifyState.h"
-#include "Characters/PlayerCharacter.h"
+#include "Characters/BaseCharacter.h"
 #include "Enums/CharacterEnums.h"
 
 
@@ -10,16 +10,16 @@ void UOccupyAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 {
 	if (MeshComp == nullptr) return;
 	if (MeshComp->GetOwner() == nullptr) return;
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
-	if (PlayerCharacter == nullptr) return;
-	PlayerCharacter->SetCharacterActionState(ECharacterActionState::Occupied);
+	ABaseCharacter* Character = Cast<ABaseCharacter>(MeshComp->GetOwner());
+	if (Character == nullptr) return;
+	Character->SetCharacterActionState(ECharacterActionState::Occupied);
 }
 
 void UOccupyAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	if (MeshComp == nullptr) return;
 	if (MeshComp->GetOwner() == nullptr) return;
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
-	if (PlayerCharacter == nullptr) return;
-	PlayerCharacter->SetCharacterActionState(ECharacterActionState::Unoccupied);
+	ABaseCharacter* Character = Cast<ABaseCharacter>(MeshComp->GetOwner());
+	if (Character == nullptr) return;
+	Character->SetCharacterActionState(ECharacterActionState::Unoccupied);
 }

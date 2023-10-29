@@ -15,12 +15,6 @@ class BATTLE_API AEnemyCharacter : public ABaseCharacter
 	GENERATED_BODY()
 private:
 	/********************
-	* Attributes Properties
-	********************/
-	UPROPERTY(EditDefaultsOnly, category = "TOSET Data")
-	FName ID;
-
-	/********************
 	* UI Properties
 	********************/
 	// Health Widget Component
@@ -37,9 +31,21 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Weapon")
 	TSubclassOf<class ABaseWeapon> EnemyWeaponClass;
 
+	/********************
+	* Combat Properties
+	********************/
+	// When player out of range, hide the health bar of enemy
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Combat")
+	double HealthBarRadius = 1000.f;
 public:
 	// Constructor
 	AEnemyCharacter();
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Get Hit Interface
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

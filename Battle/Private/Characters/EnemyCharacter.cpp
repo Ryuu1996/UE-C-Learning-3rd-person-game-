@@ -6,10 +6,25 @@
 #include "Items/Weapons/BaseWeapon.h"
 #include "UI/Enemy/EnemyHealthBarWidget.h"
 #include "Components/CapsuleComponent.h"
+#include "Macros/GeneralMacros.h"
+
+void AEnemyCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	// TODO: healthbar range
+}
+
+void AEnemyCharacter::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	Super::GetHit_Implementation(ImpactPoint);
+	ShowHealthBar();
+	if (GetCurrentHP() <= 0) HideHealthBar();
+}
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
-	GetCapsuleComponent()->SetCollisionProfileName("Enemy");
+	GetCapsuleComponent()->SetCollisionProfileName(ENEMY_PROFILENAME);
 	InitializeUI();
 
 }
@@ -20,8 +35,7 @@ void AEnemyCharacter::BeginPlay()
 	if (EnemyWeaponClass == nullptr) return;
 	ABaseWeapon* EnemyWeapon = GetWorld()->SpawnActor<ABaseWeapon>(EnemyWeaponClass);
 	EnemyWeapon->EquipWeapon(this);
-	InitializeAttributes(ID);
-	HealthWidgetComponent->SetProgressBarHealth(GetCurrentHP() / GetHP());
+	HideHealthBar();
 }
 
 void AEnemyCharacter::InitializeUI()
@@ -37,6 +51,7 @@ void AEnemyCharacter::ShowHealthBar()
 {
 	if (HealthWidgetComponent == nullptr) return;
 	HealthWidgetComponent->SetVisibility(true);
+	HealthWidgetComponent->SetProgressBarHealth(float(GetCurrentHP()) / float(GetHP()));
 }
 
 void AEnemyCharacter::HideHealthBar()

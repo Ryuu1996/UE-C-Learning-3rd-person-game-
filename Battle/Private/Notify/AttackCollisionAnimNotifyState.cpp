@@ -5,6 +5,7 @@
 #include "Characters/PlayerCharacter.h"
 #include "Items/Weapons/BaseWeapon.h"
 #include "Components/CapsuleComponent.h"
+#include "Macros/GeneralMacros.h"
 
 void UAttackCollisionAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -12,7 +13,7 @@ void UAttackCollisionAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshCo
 	if (MeshComp->GetOwner() == nullptr) return;
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
 	if (PlayerCharacter == nullptr) return;
-	PlayerCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	PlayerCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionProfileName(ITEM_PROFILENAME);
 }
 
 void UAttackCollisionAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -21,5 +22,5 @@ void UAttackCollisionAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp
 	if (MeshComp->GetOwner() == nullptr) return;
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
 	if (PlayerCharacter == nullptr) return;
-	PlayerCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	PlayerCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionProfileName(WITHOUTCOLLISION_PROFILENAME);
 }

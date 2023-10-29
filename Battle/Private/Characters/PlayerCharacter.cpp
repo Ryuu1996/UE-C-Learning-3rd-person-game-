@@ -9,7 +9,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/HUDWidget.h"
@@ -22,6 +21,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/EngineTypes.h"
 #include "Components/CapsuleComponent.h"
+#include "Macros/GeneralMacros.h"
 
 
 
@@ -41,7 +41,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 	TraceToInteractItem();
 
 	// Focus on enemy
-	if(FocusCharacter) FocusOnEnemy();
+	if(GetFocusCharacter() != nullptr &&
+		GetFocusCharacter()->GetCurrentHP() > 0) 
+		FocusOnEnemy();
 	
 	// Highlight the item to interact
 	if (InteractableItem &&
@@ -53,13 +55,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	LocomotionAnimInstance = Cast<UPlayerLocomotionAnimInstance>(GetMesh()->GetAnimInstance());
-
 	PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
-
-	InitializeAttributes(ID);
 	InitializeMappingContext();
 	InitializeWidgets();
 }
@@ -103,7 +101,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::InitializeCharacterProperties()
 {
-	GetCapsuleComponent()->SetCollisionProfileName("Ally");
+	GetCapsuleComponent()->SetCollisionProfileName(ALLY_PROFILENAME);
 	// Don't rotate when the controller rotates. Let that just affect the camera
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
@@ -218,7 +216,7 @@ void APlayerCharacter::TraceToFocusOnEnemy()
 	{
 	case true:
 		IsFocusing = false;
-		FocusCharacter = nullptr;
+		SetFocusCharacter(nullptr);
 		break;
 	case false:
 		UKismetSystemLibrary::SphereTraceSingleForObjects(
@@ -233,21 +231,10 @@ void APlayerCharacter::TraceToFocusOnEnemy()
 			HitResult,
 			true
 		);
-		FocusCharacter = Cast<ACharacter>(HitResult.GetActor());
-		if(FocusCharacter) IsFocusing = true;
+		SetFocusCharacter(Cast<ABaseCharacter>(HitResult.GetActor()));
+		if(GetFocusCharacter()) IsFocusing = true;
 		break;
 	}
-}
-
-void APlayerCharacter::FocusOnEnemy()
-{
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), FocusCharacter->GetActorLocation());
-	// To make camera more comfortable to see
-	LookAtRotation.Pitch = -30;
-	GetController()->SetControlRotation(LookAtRotation);
-	// To avoid to set actor's pitch rotation
-	LookAtRotation.Pitch = 0;
-	SetActorRotation(LookAtRotation);
 }
 
 void APlayerCharacter::Crouch(bool bClientSimulation = false)
@@ -304,14 +291,14 @@ void APlayerCharacter::LightAttack()
 void APlayerCharacter::AxeLightAttack()
 {
 	if (LocomotionAnimInstance == nullptr) return;
-	if (LightAttackMontage == nullptr) return;
-	if (LightAttackMontageSections.Num() <= 0) return;
+	if (GetLightAttackMontage() == nullptr) return;
+	if (GetLightAttackMontageSections().Num() <= 0) return;
 	// Reset timer in 2 seconds if player not attack again
-	GetWorld()->GetTimerManager().SetTimer(LightAttackTimer, this, &APlayerCharacter::ResetLightAttackIndex, 1, false, 2);
-	LocomotionAnimInstance->Montage_Play(LightAttackMontage, 1.4f);
-	int32 CurrentIndex = LightAttackMontageIndex % LightAttackMontageSections.Num();
-	LocomotionAnimInstance->Montage_JumpToSection(LightAttackMontageSections[CurrentIndex]);
-	LightAttackMontageIndex++;
+	GetWorld()->GetTimerManager().SetTimer(GetLightAttackTimer(), this, &APlayerCharacter::ResetLightAttackIndex, 1, false, 2);
+	LocomotionAnimInstance->Montage_Play(GetLightAttackMontage(), 1.4f);
+	int32 CurrentIndex = GetLightAttackMontageIndex() % GetLightAttackMontageSections().Num();
+	LocomotionAnimInstance->Montage_JumpToSection(GetLightAttackMontageSections()[CurrentIndex]);
+	SetLightAttackMontageIndex(GetLightAttackMontageIndex() + 1);
 }
 
 void APlayerCharacter::OpenOrCloseInventory()
@@ -395,7 +382,7 @@ void APlayerCharacter::UnhighlightItem()
 
 bool APlayerCharacter::CheckIfOccupied()
 {
-	if (CharacterActionState != ECharacterActionState::Occupied)
+	if (GetCharacterActionState() != ECharacterActionState::Occupied)
 	{
 		LocomotionAnimInstance->StopAllMontages(0.1);
 		return false;
@@ -405,7 +392,7 @@ bool APlayerCharacter::CheckIfOccupied()
 
 void APlayerCharacter::ResetLightAttackIndex()
 {
-	LightAttackMontageIndex = 0;
+	SetLightAttackMontageIndex(0);
 }
 
 void APlayerCharacter::RefreshInventory()

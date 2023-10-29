@@ -4,14 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/CombatInterface.h"
+#include "Enums/CharacterEnums.h"
 
 #include "BaseCharacter.generated.h"
 
 UCLASS()
-class BATTLE_API ABaseCharacter : public ACharacter
+class BATTLE_API ABaseCharacter : public ACharacter, public ICombatInterface
 {
 	GENERATED_BODY()
 private:
+	/********************
+	* Attributes Properties
+	********************/
+	UPROPERTY(EditDefaultsOnly, category = "TOSET Data")
+	FName ID;
+
 	/********************
 	* Data Properties
 	********************/
@@ -39,6 +47,43 @@ private:
 	********************/
 	// Current Weapon
 	class ABaseWeapon* CurrentWeapon;
+
+	/********************
+	* Character Montage Properties
+	********************/
+	// Light Attack Montage
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	UAnimMontage* LightAttackMontage;
+
+	// Light Attack Montage Sections' names
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	TArray<FName> LightAttackMontageSections;
+
+	// Light Attack Montage Current Section's Index
+	int32 LightAttackMontageIndex = 0;
+
+	// Timer to refresh index to 0 in certain sections
+	struct FTimerHandle LightAttackTimer;
+
+	// Die Montage
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	UAnimMontage* DieMontage;
+
+	// Die Montage Sections' names
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	TArray<FName> DieMontageSections;
+
+	// Others
+	UPROPERTY(EditAnywhere, Category = "TOSET Combat");
+	float DeathLifeSpan = 5.f;
+
+	// Hit result while sphere tracing, the pawn to focus
+	class ABaseCharacter* FocusCharacter;
+
+	// Character Action State
+	ECharacterActionState CharacterActionState = ECharacterActionState::Unoccupied;
+
+	UAnimInstance* AnimInstance;
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
@@ -49,6 +94,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Get Hit Interface
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+
+	// Take damage when weapon apply damage
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void Destroyed() override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -63,10 +115,21 @@ protected:
 	virtual void InitializeCharacterStates();
 
 	// Initialize Character Attributes
-	void InitializeAttributes(FName ID);
+	void InitializeAttributes(FName CharacterID);
 
+	// Calculate the angle of hit and actor location
+	double HitTheta(const FVector& ImpactPoint);
+
+	// Die
+	void CheckCharacterDie(const FVector& ImpactPoint);
+
+	// Focus on enemy
+	void FocusOnEnemy();
+
+	void StopFocusing();
 private:
 public:
+	FORCEINLINE FName GetID() const { return ID; }
 	FORCEINLINE int32 GetHP() const { return HP; }
 	FORCEINLINE int32 GetStamina() const { return Stamina; }
 	FORCEINLINE int32 GetCurrentHP() const { return CurrentHP; }
@@ -75,4 +138,15 @@ public:
 	FORCEINLINE void SetCurrentStamina(int32 InputStamina) { CurrentStamina = InputStamina; }
 	FORCEINLINE ABaseWeapon* GetCurrentWeapon() { return CurrentWeapon; }
 	FORCEINLINE void SetCurrentWeapon(class ABaseWeapon* BaseWeapon) { CurrentWeapon = BaseWeapon; }
+	FORCEINLINE UAnimMontage* GetLightAttackMontage() const { return LightAttackMontage; }
+	FORCEINLINE TArray<FName> GetLightAttackMontageSections() const { return LightAttackMontageSections; }
+	FORCEINLINE int32 GetLightAttackMontageIndex() const { return LightAttackMontageIndex; }
+	FORCEINLINE FTimerHandle& GetLightAttackTimer() { return LightAttackTimer; }
+	FORCEINLINE void SetLightAttackMontageIndex(int32 Index) { LightAttackMontageIndex = Index; }
+	FORCEINLINE ABaseCharacter* GetFocusCharacter() const { return FocusCharacter; }
+	FORCEINLINE void SetFocusCharacter(ABaseCharacter* Character) { FocusCharacter = Character; }
+	FORCEINLINE void SetCharacterActionState(ECharacterActionState State) { CharacterActionState = State; }
+	FORCEINLINE ECharacterActionState GetCharacterActionState() { return CharacterActionState; }
+	FORCEINLINE UAnimInstance* GetAnimInstance() { return AnimInstance; }
+
 };

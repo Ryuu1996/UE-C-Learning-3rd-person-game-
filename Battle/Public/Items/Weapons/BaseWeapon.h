@@ -33,6 +33,9 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	class USphereComponent* SphereTraceEnd;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Socket")
+	FName EquipSocket = "RightHandSocket";
 public:
 	ABaseWeapon();
 	// Equip weapon

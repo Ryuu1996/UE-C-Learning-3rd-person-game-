@@ -69,9 +69,6 @@ private:
 	// Is character focusing
 	bool IsFocusing = false;
 
-	// Hit result while sphere tracing, the pawn to focus
-	class ACharacter* FocusCharacter;
-
 	/********************
 	* UI Input Properties
 	********************/
@@ -82,7 +79,6 @@ private:
 	// Open up Inventory Widget Input
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Input")
 	class UInputAction* InventoryAction;
-
 
 	/********************
 	* Camera Properties
@@ -111,14 +107,9 @@ private:
 	/********************
 	* Data Properties
 	********************/
-	// Player ID
-	UPROPERTY(EditDefaultsOnly, category = "TOSET Data")
-	FName ID;
-
 	// Data table for search
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Data")
 	class UDataTable* InventoryDataTable;
-
 
 	/********************
 	* Character State Properties
@@ -126,25 +117,7 @@ private:
 	// Character Equip State
 	ECharacterEquipState CharacterEquipState = ECharacterEquipState::Unarmed;
 
-	// Character Action State
-	ECharacterActionState CharacterActionState = ECharacterActionState::Unoccupied;
 
-	/********************
-	* Character Montage Properties
-	********************/
-	// Light Attack Montage
-	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
-	UAnimMontage* LightAttackMontage;
-
-	// Light Attack Montage Sections' names
-	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
-	TArray<FName> LightAttackMontageSections;
-
-	// Light Attack Montage Current Section's Index
-	int32 LightAttackMontageIndex = 0;
-
-	// Timer to refresh index to 0 in certain sections
-	struct FTimerHandle LightAttackTimer;
 
 
 public:
@@ -169,6 +142,7 @@ public:
 	// Items' FNames stored
 	UPROPERTY(VisibleInstanceOnly)
 	TMap<FName, int32> InventoryItems;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -217,8 +191,6 @@ private:
 	// Called for trying to focus or defocus on enemy 
 	void TraceToFocusOnEnemy();
 
-	// Focus on enemy
-	void FocusOnEnemy();
 
 	// Crouch
 	virtual void Crouch(bool bClientSimulation) override;
@@ -264,8 +236,5 @@ public:
 
 	// Get Character Equip State
 	FORCEINLINE ECharacterEquipState GetCharacterEquipState() const { return CharacterEquipState; }
-
-	// Set Character Action State
-	FORCEINLINE void SetCharacterActionState(ECharacterActionState State) { CharacterActionState = State; }
 
 };

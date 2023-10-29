@@ -15,16 +15,10 @@ void AMeleeWeapon::UseItem_Implementation()
 	if (PlayerCharacter == nullptr) return;
 	PlayerCharacter->SetCharacterEquipState(ECharacterEquipState::AxeEquipped);
 	EquipWeapon(PlayerCharacter);
-	PlayerCharacter->SetCurrentWeapon(this);
 }
 
 void AMeleeWeapon::EquipWeapon(ABaseCharacter* Character)
 {
 	Super::EquipWeapon(Character);
-	SetOwner(Character);
-	SetInstigator(Character);
-	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-	GetCapsuleComponent()->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, FName("RightHandSocket"));
-	//GetStaticMeshComponent()->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, FName("RightHandSocket"));
 }
 

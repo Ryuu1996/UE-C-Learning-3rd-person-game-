@@ -4,6 +4,7 @@
 #include "Items/BaseItem.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Macros/GeneralMacros.h"
 
 
 ABaseItem::ABaseItem()
@@ -27,17 +28,17 @@ void ABaseItem::InitializeMesh()
 {
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Component"));
 	SetRootComponent(CapsuleComponent);
-	CapsuleComponent->SetCollisionProfileName("Item");
+	CapsuleComponent->SetCollisionProfileName(ITEM_PROFILENAME);
 
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Item Mesh Component"));
 	ItemMesh->SetupAttachment(GetRootComponent());
-	ItemMesh->SetCollisionProfileName("WithoutCollision");
+	ItemMesh->SetCollisionProfileName(WITHOUTCOLLISION_PROFILENAME);
 
 	HighlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Highlight Mesh Component"));
 	HighlightMesh->SetupAttachment(ItemMesh);
 	HighlightMesh->SetVisibility(false);
-	HighlightMesh->SetCollisionProfileName("WithoutCollision");
+	HighlightMesh->SetCollisionProfileName(WITHOUTCOLLISION_PROFILENAME);
 }
 
 UStaticMeshComponent* ABaseItem::GetHighlightMesh() const
