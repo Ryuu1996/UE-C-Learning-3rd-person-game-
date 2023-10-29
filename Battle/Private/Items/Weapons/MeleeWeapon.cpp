@@ -5,6 +5,7 @@
 #include "Characters/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Enums/CharacterEnums.h"
+#include "Components/CapsuleComponent.h"
 
 
 
@@ -14,6 +15,7 @@ void AMeleeWeapon::UseItem_Implementation()
 	if (PlayerCharacter == nullptr) return;
 	PlayerCharacter->SetCharacterEquipState(ECharacterEquipState::AxeEquipped);
 	EquipWeapon(PlayerCharacter);
+	PlayerCharacter->SetCurrentWeapon(this);
 }
 
 void AMeleeWeapon::EquipWeapon(ABaseCharacter* Character)
@@ -22,5 +24,7 @@ void AMeleeWeapon::EquipWeapon(ABaseCharacter* Character)
 	SetOwner(Character);
 	SetInstigator(Character);
 	FAttachmentTransformRules AttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-	GetStaticMeshComponent()->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, FName("RightHandSocket"));
+	GetCapsuleComponent()->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, FName("RightHandSocket"));
+	//GetStaticMeshComponent()->AttachToComponent(Character->GetMesh(), AttachmentTransformRules, FName("RightHandSocket"));
 }
+

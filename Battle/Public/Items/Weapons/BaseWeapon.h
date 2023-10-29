@@ -22,12 +22,31 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Data")
 	class UDataTable* WeaponDataTable;
 
+	// The damage of the weapon
 	int32 Damage = 0;
+
+	/********************
+	* Hit Trace Properties
+	********************/
+	UPROPERTY(VisibleDefaultsOnly)
+	class USphereComponent* SphereTraceStart;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	class USphereComponent* SphereTraceEnd;
 public:
+	ABaseWeapon();
 	// Equip weapon
 	virtual void EquipWeapon(class ABaseCharacter* Character);
 protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Initialize data
 	void InitializeData(FName RowName);
+
+	// Overlap when attacking
+	UFUNCTION()
+	void AttackOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
 public:
 	FORCEINLINE int32 GetDamage() const { return Damage; }

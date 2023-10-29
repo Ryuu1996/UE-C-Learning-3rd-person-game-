@@ -21,6 +21,7 @@
 #include "Data/InventoryRowBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/EngineTypes.h"
+#include "Components/CapsuleComponent.h"
 
 
 
@@ -102,7 +103,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::InitializeCharacterProperties()
 {
-	Super::InitializeCharacterProperties();
+	GetCapsuleComponent()->SetCollisionProfileName("Ally");
 	// Don't rotate when the controller rotates. Let that just affect the camera
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;

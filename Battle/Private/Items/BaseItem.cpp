@@ -27,18 +27,17 @@ void ABaseItem::InitializeMesh()
 {
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Component"));
 	SetRootComponent(CapsuleComponent);
+	CapsuleComponent->SetCollisionProfileName("Item");
+
+
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Item Mesh Component"));
 	ItemMesh->SetupAttachment(GetRootComponent());
-	ItemMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	// Search my custom object type in Config/DefaultEngine.ini, in this case I want to set it Item
-	ItemMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	ItemMesh->SetCollisionProfileName("WithoutCollision");
 
 	HighlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Highlight Mesh Component"));
 	HighlightMesh->SetupAttachment(ItemMesh);
 	HighlightMesh->SetVisibility(false);
-	HighlightMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	HighlightMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HighlightMesh->SetCollisionProfileName("WithoutCollision");
 }
 
 UStaticMeshComponent* ABaseItem::GetHighlightMesh() const

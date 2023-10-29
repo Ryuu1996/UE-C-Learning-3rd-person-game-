@@ -33,6 +33,12 @@ private:
 
 	// Current Stamina
 	int32 CurrentStamina = 100;
+
+	/********************
+	* Character Current Equipments
+	********************/
+	// Current Weapon
+	class ABaseWeapon* CurrentWeapon;
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
@@ -51,7 +57,7 @@ protected:
 	* Initialize Functions
 	********************/
 	// Initialize Character properties
-	virtual void InitializeCharacterProperties();
+	void InitializeCharacterProperties();
 
 	// Initialize Character states
 	virtual void InitializeCharacterStates();
@@ -67,4 +73,6 @@ public:
 	FORCEINLINE int32 GetCurrentStamina() const { return CurrentStamina; }
 	FORCEINLINE void SetCurrentHP(int32 InputHP) { CurrentHP = InputHP; }
 	FORCEINLINE void SetCurrentStamina(int32 InputStamina) { CurrentStamina = InputStamina; }
+	FORCEINLINE ABaseWeapon* GetCurrentWeapon() { return CurrentWeapon; }
+	FORCEINLINE void SetCurrentWeapon(class ABaseWeapon* BaseWeapon) { CurrentWeapon = BaseWeapon; }
 };

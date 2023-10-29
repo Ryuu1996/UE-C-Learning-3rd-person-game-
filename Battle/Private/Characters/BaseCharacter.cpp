@@ -9,7 +9,7 @@
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
-	
+	InitializeCharacterProperties();
 }
 
 // Called to bind functionality to input
@@ -23,8 +23,7 @@ void ABaseCharacter::InitializeCharacterProperties()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 	GetMesh()->AddLocalRotation(FRotator(0.f, -90.f, 0.f));
-	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionProfileName("WithoutCollision");
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 800.f, 0.f); // ...at this rotation rate

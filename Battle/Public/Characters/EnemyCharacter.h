@@ -27,6 +27,7 @@ private:
 	UPROPERTY(VisibleDefaultsOnly)
 	class UHealthWidgetComponent* HealthWidgetComponent;
 
+	// The class of Blueprint health bar
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET UI")
 	TSubclassOf<UUserWidget> EnemyHealthBarWidgetClass;
 
@@ -37,11 +38,18 @@ private:
 	TSubclassOf<class ABaseWeapon> EnemyWeaponClass;
 
 public:
+	// Constructor
 	AEnemyCharacter();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
+	// Initialize UI
 	void InitializeUI();
 
+	// Show health bar
+	void ShowHealthBar();
+
+	// Hide health bar
+	void HideHealthBar();
 };

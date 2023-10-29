@@ -58,4 +58,5 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetStaticMeshComponent() const { return ItemMesh;	}
 	FORCEINLINE EItemEquipState GetItemEquipState() const { return ItemEquipState; }
 	FORCEINLINE void SetItemEquipState(EItemEquipState State) { ItemEquipState = State; }
+	FORCEINLINE UCapsuleComponent* GetCapsuleComponent() const { return CapsuleComponent; }
 };

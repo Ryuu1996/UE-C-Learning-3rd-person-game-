@@ -5,11 +5,11 @@
 #include "UI/Enemy/HealthWidgetComponent.h"
 #include "Items/Weapons/BaseWeapon.h"
 #include "UI/Enemy/EnemyHealthBarWidget.h"
+#include "Components/CapsuleComponent.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
-	// Search my custom object type in Config/DefaultEngine.ini, in this case I want to set it Enemy
-	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+	GetCapsuleComponent()->SetCollisionProfileName("Enemy");
 	InitializeUI();
 
 }
@@ -31,4 +31,16 @@ void AEnemyCharacter::InitializeUI()
 	HealthWidgetComponent->AddLocalOffset(FVector(0.f, 0.f, 150.f));
 	HealthWidgetComponent->SetWidgetClass(EnemyHealthBarWidgetClass);
 	HealthWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+}
+
+void AEnemyCharacter::ShowHealthBar()
+{
+	if (HealthWidgetComponent == nullptr) return;
+	HealthWidgetComponent->SetVisibility(true);
+}
+
+void AEnemyCharacter::HideHealthBar()
+{
+	if (HealthWidgetComponent == nullptr) return;
+	HealthWidgetComponent->SetVisibility(false);
 }

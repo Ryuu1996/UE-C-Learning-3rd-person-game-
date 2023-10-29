@@ -181,7 +181,7 @@ protected:
 	* Initialize Functions
 	********************/
 	// Initialize Character properties
-	virtual void InitializeCharacterProperties() override;
+	void InitializeCharacterProperties();
 
 private:
 	/********************
