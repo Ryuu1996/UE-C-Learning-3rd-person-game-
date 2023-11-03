@@ -73,7 +73,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
 	TArray<FName> DieMontageSections;
 
-	// Others
+	// Death life span
 	UPROPERTY(EditAnywhere, Category = "TOSET Combat");
 	float DeathLifeSpan = 5.f;
 
@@ -83,7 +83,17 @@ private:
 	// Character Action State
 	ECharacterActionState CharacterActionState = ECharacterActionState::Unoccupied;
 
+	// Anim instance
 	UAnimInstance* AnimInstance;
+
+	/********************
+	* Character AI Properties
+	********************/
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET AI")
+	class UBehaviorTree* BehaviorTree;
+
+
+
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
@@ -126,6 +136,7 @@ protected:
 	// Focus on enemy
 	void FocusOnEnemy();
 
+	// Stop focusing on enemy
 	void StopFocusing();
 private:
 public:
@@ -148,5 +159,5 @@ public:
 	FORCEINLINE void SetCharacterActionState(ECharacterActionState State) { CharacterActionState = State; }
 	FORCEINLINE ECharacterActionState GetCharacterActionState() { return CharacterActionState; }
 	FORCEINLINE UAnimInstance* GetAnimInstance() { return AnimInstance; }
-
+	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
 };

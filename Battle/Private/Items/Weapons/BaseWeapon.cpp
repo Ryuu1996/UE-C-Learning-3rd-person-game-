@@ -87,6 +87,4 @@ void ABaseWeapon::AttackOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (CombatInterface == nullptr) return;
 	CombatInterface->Execute_GetHit(HitActor, HitResult.ImpactPoint);
 
-
-
 }

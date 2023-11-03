@@ -22,8 +22,8 @@
 #include "Engine/EngineTypes.h"
 #include "Components/CapsuleComponent.h"
 #include "Macros/GeneralMacros.h"
-
-
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 
 APlayerCharacter::APlayerCharacter()
@@ -31,6 +31,7 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	InitializeCameraComponents();
 	InitializeCharacterProperties();
+	InitializeStimulusSource();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -144,6 +145,14 @@ void APlayerCharacter::InitializeWidgets()
 	HUDWidget->SetProgressBarSTAPercent(1.f);
 	// TODO: Set Current HP & Max HP
 	HUDWidget->SetTextBlockHP(GetCurrentHP(), GetHP());
+}
+
+void APlayerCharacter::InitializeStimulusSource()
+{
+	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	if (StimulusSource == nullptr) return;
+	StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>()); //UAISense_Sight::StaticClass()
+	StimulusSource->RegisterWithPerceptionSystem();
 }
 
 void APlayerCharacter::Look(const FInputActionValue& Value)

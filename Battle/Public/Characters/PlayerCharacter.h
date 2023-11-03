@@ -27,6 +27,8 @@ private:
 	// Player Animate Instance
 	class UPlayerLocomotionAnimInstance* LocomotionAnimInstance;
 
+	// Stimulus register
+	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 	/********************
 	* Act Input Properties
 	********************/
@@ -119,7 +121,6 @@ private:
 
 
 
-
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
@@ -169,7 +170,9 @@ private:
 	
 	// Initialize Widgets
 	void InitializeWidgets();
-	
+
+	// Setup Stimulus Source
+	void InitializeStimulusSource();
 	/********************
 	* Act Input Functions
 	********************/
@@ -230,6 +233,8 @@ private:
 
 	// Reset light attack index to 0
 	void ResetLightAttackIndex();
+
+
 public:
 	// Set Character Equip State
 	FORCEINLINE void SetCharacterEquipState(ECharacterEquipState State) { CharacterEquipState = State; }
