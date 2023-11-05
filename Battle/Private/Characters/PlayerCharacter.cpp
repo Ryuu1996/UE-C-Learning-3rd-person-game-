@@ -53,6 +53,17 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 }
 
+void APlayerCharacter::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	Super::GetHit_Implementation(ImpactPoint);
+	// Access Widgets
+	UHUDWidget* HUDWidget = PlayerHUD->GetHUDWidget();
+	// Set Widgets in HUD
+	HUDWidget->SetProgressBarHPPercent(float(GetCurrentHP()) / float(GetHP()));
+	HUDWidget->SetTextBlockHP(GetCurrentHP(), GetHP());
+
+}
+
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -143,7 +154,6 @@ void APlayerCharacter::InitializeWidgets()
 	// Inilialize Widgets in HUD
 	HUDWidget->SetProgressBarHPPercent(1.f);
 	HUDWidget->SetProgressBarSTAPercent(1.f);
-	// TODO: Set Current HP & Max HP
 	HUDWidget->SetTextBlockHP(GetCurrentHP(), GetHP());
 }
 
@@ -302,8 +312,8 @@ void APlayerCharacter::AxeLightAttack()
 	if (LocomotionAnimInstance == nullptr) return;
 	if (GetLightAttackMontage() == nullptr) return;
 	if (GetLightAttackMontageSections().Num() <= 0) return;
-	// Reset timer in 2 seconds if player not attack again
-	GetWorld()->GetTimerManager().SetTimer(GetLightAttackTimer(), this, &APlayerCharacter::ResetLightAttackIndex, 1, false, 2);
+	// Reset timer in several seconds if player not attack again
+	GetWorld()->GetTimerManager().SetTimer(GetLightAttackTimer(), this, &APlayerCharacter::ResetLightAttackIndex, 1.f, false, 1.5f);
 	LocomotionAnimInstance->Montage_Play(GetLightAttackMontage(), 1.4f);
 	int32 CurrentIndex = GetLightAttackMontageIndex() % GetLightAttackMontageSections().Num();
 	LocomotionAnimInstance->Montage_JumpToSection(GetLightAttackMontageSections()[CurrentIndex]);

@@ -144,6 +144,12 @@ public:
 	UPROPERTY(VisibleInstanceOnly)
 	TMap<FName, int32> InventoryItems;
 
+	/********************
+	* Other Functions
+	********************/
+	// Get Hit Interface
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+
 
 protected:
 	// Called when the game starts or when spawned

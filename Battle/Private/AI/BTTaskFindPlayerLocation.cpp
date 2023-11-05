@@ -5,6 +5,7 @@
 #include "Characters/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AI/BaseAIController.h"
 
 UBTTaskFindPlayerLocation::UBTTaskFindPlayerLocation()
 {
@@ -15,8 +16,17 @@ EBTNodeResult::Type UBTTaskFindPlayerLocation::ExecuteTask(UBehaviorTreeComponen
 {
 	APlayerCharacter* const PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (PlayerCharacter == nullptr) return EBTNodeResult::Failed;
+	ABaseAIController* BaseAIController = Cast<ABaseAIController>(OwnerComp.GetAIOwner());
+	if (BaseAIController == nullptr) return EBTNodeResult::Failed;
+	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(BaseAIController->GetCharacter());
+	if (BaseCharacter == nullptr) return EBTNodeResult::Failed;
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), PlayerCharacter->GetActorLocation());
+	FVector PlayerLocation = PlayerCharacter->GetActorLocation();
+	FVector CharacterLocation = BaseCharacter->GetActorLocation();
+	FVector NormalizeVector = (CharacterLocation - PlayerLocation).GetSafeNormal();
+	FVector TargetLocation = TargetLocation = PlayerLocation + NormalizeVector * ChaseRadius;
+
+	OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), TargetLocation);
 	return EBTNodeResult::Succeeded;
 
 

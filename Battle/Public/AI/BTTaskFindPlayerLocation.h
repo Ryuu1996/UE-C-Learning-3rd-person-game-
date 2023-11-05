@@ -13,6 +13,8 @@ UCLASS()
 class BATTLE_API UBTTaskFindPlayerLocation : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
+private:
+	float ChaseRadius = 50.f;
 public:
 	UBTTaskFindPlayerLocation();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

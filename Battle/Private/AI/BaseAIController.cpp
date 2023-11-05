@@ -42,7 +42,7 @@ void ABaseAIController::SetupPerceptionSystem()
 	if (SightConfig == nullptr) return;
 	SightConfig->SightRadius = 1000.f;
 	SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.f;
-	SightConfig->PeripheralVisionAngleDegrees = 45.f;
+	SightConfig->PeripheralVisionAngleDegrees = 70.f;
 	SightConfig->SetMaxAge(5.f); // The time of the perceived stimulus forgotten
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = 520.f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
@@ -63,6 +63,6 @@ void ABaseAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimul
 {
 	APlayerCharacter* const PlayerCharacter = Cast<APlayerCharacter>(Actor);
 	if (PlayerCharacter == nullptr) return;
-	GetBlackboardComponent()->SetValueAsBool(FName("CanSeePlayer"), Stimulus.WasSuccessfullySensed());
+	GetBlackboardComponent()->SetValueAsBool(FName("IsInCombat"), Stimulus.WasSuccessfullySensed());
 
 }

@@ -2,7 +2,7 @@
 
 
 #include "Notify/AttackCollisionAnimNotifyState.h"
-#include "Characters/PlayerCharacter.h"
+#include "Characters/BaseCharacter.h"
 #include "Items/Weapons/BaseWeapon.h"
 #include "Components/CapsuleComponent.h"
 #include "Macros/GeneralMacros.h"
@@ -11,16 +11,16 @@ void UAttackCollisionAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshCo
 {
 	if (MeshComp == nullptr) return;
 	if (MeshComp->GetOwner() == nullptr) return;
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
-	if (PlayerCharacter == nullptr) return;
-	PlayerCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionProfileName(ITEM_PROFILENAME);
+	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
+	if (BaseCharacter == nullptr) return;
+	BaseCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionProfileName(ITEM_PROFILENAME);
 }
 
 void UAttackCollisionAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	if (MeshComp == nullptr) return;
 	if (MeshComp->GetOwner() == nullptr) return;
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
-	if (PlayerCharacter == nullptr) return;
-	PlayerCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionProfileName(WITHOUTCOLLISION_PROFILENAME);
+	ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(MeshComp->GetOwner());
+	if (BaseCharacter == nullptr) return;
+	BaseCharacter->GetCurrentWeapon()->GetCapsuleComponent()->SetCollisionProfileName(WITHOUTCOLLISION_PROFILENAME);
 }

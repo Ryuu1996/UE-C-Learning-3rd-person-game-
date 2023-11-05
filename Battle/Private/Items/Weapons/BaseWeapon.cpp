@@ -72,7 +72,6 @@ void ABaseWeapon::AttackOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		HitResult,
 		true
 	);
-
 	// Apply Damage
 	AActor* HitActor = HitResult.GetActor();
 	if (HitActor == nullptr) return;

@@ -15,6 +15,15 @@ class BATTLE_API AEnemyCharacter : public ABaseCharacter
 	GENERATED_BODY()
 private:
 	/********************
+	* General Properties
+	********************/
+	// Controller
+	class ABaseAIController* BaseAIController;
+
+	// Locomotion Anim Instance
+	class ULocomotionAnimInstance* LocomotionAnimInstance;
+
+	/********************
 	* UI Properties
 	********************/
 	// Health Widget Component
@@ -34,9 +43,13 @@ private:
 	/********************
 	* Combat Properties
 	********************/
-	// When player out of range, hide the health bar of enemy
+	// When player out of range, Enemy lose interest
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Combat")
-	double HealthBarRadius = 1000.f;
+	double InterestRadius = 2000.f;
+
+	// Melee Attack Range
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Combat")
+	float MeleeAttackRange = 130.f;
 public:
 	// Constructor
 	AEnemyCharacter();
@@ -46,6 +59,12 @@ public:
 
 	// Get Hit Interface
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+
+	// On character destoryed
+	virtual void Destroyed() override;
+
+	// Attack
+	void Attack();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,4 +77,5 @@ private:
 
 	// Hide health bar
 	void HideHealthBar();
+
 };

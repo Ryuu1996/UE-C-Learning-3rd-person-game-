@@ -13,6 +13,7 @@ UCLASS()
 class BATTLE_API UBTTaskChasePlayer : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
+private:
 public:
 	UBTTaskChasePlayer();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

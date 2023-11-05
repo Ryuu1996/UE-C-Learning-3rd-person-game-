@@ -110,6 +110,7 @@ public:
 	// Take damage when weapon apply damage
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	// On character destoryed
 	virtual void Destroyed() override;
 protected:
 	// Called when the game starts or when spawned

@@ -8,6 +8,8 @@
 #include "Macros/GeneralMacros.h"
 #include "Items/Weapons/BaseWeapon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "AI/BaseAIController.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -98,13 +100,21 @@ void ABaseCharacter::CheckCharacterDie(const FVector& ImpactPoint)
 	// Play die montage
 	if (AnimInstance == nullptr) return;
 	if (DieMontage == nullptr) return;
+	AnimInstance->StopAllMontages(0.1);
 	AnimInstance->Montage_Play(DieMontage);
 	AnimInstance->Montage_JumpToSection(Section, DieMontage);
+	SetCharacterActionState(ECharacterActionState::Occupied);
 
 	// After play die montage
-	GetCapsuleComponent()->SetCollisionProfileName(WITHOUTCOLLISION_PROFILENAME);
-	SetLifeSpan(DeathLifeSpan);
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+	ABaseAIController* BaseAIController = Cast<ABaseAIController>(GetController());
+	if (BaseAIController)
+	{
+		BaseAIController->GetBrainComponent()->StopLogic(FString("Character Dies"));
+		SetLifeSpan(DeathLifeSpan);
+	}
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
 }
 
 void ABaseCharacter::FocusOnEnemy()
