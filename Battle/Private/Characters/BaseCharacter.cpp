@@ -90,7 +90,7 @@ void ABaseCharacter::CheckCharacterDie(const FVector& ImpactPoint)
 	if (GetCurrentHP() > 0) return;
 	double Theta = HitTheta(ImpactPoint);
 	FName Section;
-	if (Theta >= -90.f && Theta <= 90.f)
+	if (Theta >= -135.f && Theta <= 135.f)
 		// Fall Back
 		Section = DieMontageSections[0];
 	else
@@ -101,7 +101,7 @@ void ABaseCharacter::CheckCharacterDie(const FVector& ImpactPoint)
 	if (AnimInstance == nullptr) return;
 	if (DieMontage == nullptr) return;
 	AnimInstance->StopAllMontages(0.1);
-	AnimInstance->Montage_Play(DieMontage);
+	AnimInstance->Montage_Play(DieMontage, 0.7f);
 	AnimInstance->Montage_JumpToSection(Section, DieMontage);
 	SetCharacterActionState(ECharacterActionState::Occupied);
 

@@ -106,6 +106,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Light Attack
 	EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::LightAttack);
 
+	// Dodge 
+	EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Dodge);
+
+
 	// Open up Inventory Widget
 	EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Triggered, this, &APlayerCharacter::OpenOrCloseInventory);
 
@@ -318,6 +322,40 @@ void APlayerCharacter::AxeLightAttack()
 	int32 CurrentIndex = GetLightAttackMontageIndex() % GetLightAttackMontageSections().Num();
 	LocomotionAnimInstance->Montage_JumpToSection(GetLightAttackMontageSections()[CurrentIndex]);
 	SetLightAttackMontageIndex(GetLightAttackMontageIndex() + 1);
+}
+
+void APlayerCharacter::Dodge()
+{
+	if (CheckIfOccupied()) return;
+	if (LocomotionAnimInstance->GetIsFalling()) return;
+
+	if (LocomotionAnimInstance == nullptr) return;
+	if (GetLightAttackMontage() == nullptr) return;
+	if (GetLightAttackMontageSections().Num() <= 0) return;
+
+	FName Section;
+	float Speed = LocomotionAnimInstance->GetCharacterSpeed();
+	float Direction = LocomotionAnimInstance->GetCharacterDirection();
+
+	// Jump Back
+	if (Speed == 0.f)
+		Section = GetDodgeMontageSections()[4];
+	// Roll Forward
+	else if (Direction <= 45 && Direction >= -45)
+		Section = GetDodgeMontageSections()[0];
+	// Roll Back
+	else if (Direction <= -135 || Direction >= 135)
+		Section = GetDodgeMontageSections()[1];
+	// Roll Left
+	else if (Direction <= -45 && Direction >= -135)
+		Section = GetDodgeMontageSections()[2];
+	// Roll Right
+	else if (Direction <= 135 && Direction >= 45)
+		Section = GetDodgeMontageSections()[3];
+
+
+	LocomotionAnimInstance->Montage_Play(GetDodgeMontage(), 1.3f);
+	LocomotionAnimInstance->Montage_JumpToSection(Section);
 }
 
 void APlayerCharacter::OpenOrCloseInventory()

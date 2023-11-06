@@ -68,6 +68,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Input")
 	class UInputAction* LightAttackAction;
 
+	// Dodge Input Action
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Input")
+	class UInputAction* DodgeAction;
+
 	// Is character focusing
 	bool IsFocusing = false;
 
@@ -179,6 +183,7 @@ private:
 
 	// Setup Stimulus Source
 	void InitializeStimulusSource();
+
 	/********************
 	* Act Input Functions
 	********************/
@@ -200,7 +205,6 @@ private:
 	// Called for trying to focus or defocus on enemy 
 	void TraceToFocusOnEnemy();
 
-
 	// Crouch
 	virtual void Crouch(bool bClientSimulation) override;
 
@@ -212,6 +216,9 @@ private:
 
 	// Axe Light Attack
 	void AxeLightAttack();
+
+	// Dodge
+	void Dodge();
 
 	/********************
 	* UI Input Functions

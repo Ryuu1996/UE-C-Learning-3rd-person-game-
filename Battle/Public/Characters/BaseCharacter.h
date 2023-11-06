@@ -73,6 +73,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
 	TArray<FName> DieMontageSections;
 
+	// Dodge Montage
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	UAnimMontage* DodgeMontage;
+
+	// Dodge Montage Sections' names
+	UPROPERTY(EditDefaultsOnly, Category = "TOSET Montage")
+	TArray<FName> DodgeMontageSections;
+
+
 	// Death life span
 	UPROPERTY(EditAnywhere, Category = "TOSET Combat");
 	float DeathLifeSpan = 5.f;
@@ -152,6 +161,10 @@ public:
 	FORCEINLINE void SetCurrentWeapon(class ABaseWeapon* BaseWeapon) { CurrentWeapon = BaseWeapon; }
 	FORCEINLINE UAnimMontage* GetLightAttackMontage() const { return LightAttackMontage; }
 	FORCEINLINE TArray<FName> GetLightAttackMontageSections() const { return LightAttackMontageSections; }
+	FORCEINLINE UAnimMontage* GetDieMontage() const { return DieMontage; }
+	FORCEINLINE TArray<FName> GetDieMontageSections() const { return DieMontageSections; }
+	FORCEINLINE UAnimMontage* GetDodgeMontage() const { return DodgeMontage; }
+	FORCEINLINE TArray<FName> GetDodgeMontageSections() const { return DodgeMontageSections; }
 	FORCEINLINE int32 GetLightAttackMontageIndex() const { return LightAttackMontageIndex; }
 	FORCEINLINE FTimerHandle& GetLightAttackTimer() { return LightAttackTimer; }
 	FORCEINLINE void SetLightAttackMontageIndex(int32 Index) { LightAttackMontageIndex = Index; }

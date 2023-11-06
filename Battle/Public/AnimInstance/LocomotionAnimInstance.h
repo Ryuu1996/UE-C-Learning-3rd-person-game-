@@ -49,6 +49,9 @@ private:
 public:
 	FORCEINLINE bool GetIsCrouching() const { return IsCrouching; }
 	FORCEINLINE void SetIsCrouching(bool Result) { IsCrouching = Result; }
+	FORCEINLINE float GetCharacterSpeed() const { return CharacterSpeed; }
+	FORCEINLINE float GetCharacterDirection() const { return CharacterDirection; }
+	FORCEINLINE float GetIsFalling() const { return IsFalling; }
 
 
 

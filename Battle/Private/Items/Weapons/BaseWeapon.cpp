@@ -47,6 +47,7 @@ void ABaseWeapon::InitializeData(FName ItemID)
 
 void ABaseWeapon::AttackOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor->CanBeDamaged() == false) return;
 	if (GetOwner() == nullptr) return;
 	// Only different camps can attack each other
 	FName ThisProfileName = Cast<ABaseCharacter>(GetOwner())->GetCapsuleComponent()->GetCollisionProfileName();
